@@ -102,6 +102,11 @@ class MessageWorker : public ErrorAwareWorker {
     for (unsigned int i = 0; i < message_queue.size(); i++) {
       if (callback && !callback->IsEmpty()) {
         HandleMessageCallback(message_queue[i], RdKafka::ERR_NO_ERROR);
+      } else {
+        // cleaning up heap allocations
+        if (message_queue[i] != NULL) {
+          delete message_queue[i];
+        }
       }
 
       // we are done with it. it is about to go out of scope
